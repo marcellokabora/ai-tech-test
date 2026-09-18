@@ -11,7 +11,7 @@ copy .env.example .env # Windows; use cp on macOS/Linux
 npm run dev
 ```
 
-The API listens on `http://localhost:3000` by default. `LLM_BASE_URL` is OpenAI-compatible, so OpenRouter, OpenAI, or another compatible provider can be used. The LLM is required for `/users/summary` and `/users/filter`; those routes return an explicit error when it is not configured or unavailable.
+The API listens on `http://localhost:3000` by default. The example configuration uses Google's Gemini free tier through its OpenAI-compatible endpoint and the `gemini-3.6-flash` model. Create a key at [Google AI Studio](https://aistudio.google.com/apikey) and put it in `.env`. `LLM_BASE_URL` remains configurable for another OpenAI-compatible provider. The LLM is required for `/users/summary` and `/users/filter`; those routes return an explicit error when it is not configured or unavailable.
 
 ## Endpoints
 
