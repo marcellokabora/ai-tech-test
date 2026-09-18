@@ -9,7 +9,7 @@ export const config = {
   port: positiveInteger(process.env.PORT, 3000),
   randomUserUrl: process.env.RANDOM_USER_URL ?? "https://randomuser.me/api/",
   llmApiKey: process.env.LLM_API_KEY,
-  llmBaseUrl: (process.env.LLM_BASE_URL ?? "https://openrouter.ai/api/v1").replace(/\/$/, ""),
-  llmModel: process.env.LLM_MODEL ?? "google/gemini-2.0-flash-exp:free",
+  llmBaseUrl: (process.env.LLM_BASE_URL ?? "https://generativelanguage.googleapis.com/v1beta/openai").replace(/\/$/, ""),
+  llmModel: process.env.LLM_MODEL ?? "gemini-3.6-flash",
   llmTimeoutMs: positiveInteger(process.env.LLM_TIMEOUT_MS, 15000)
 };
