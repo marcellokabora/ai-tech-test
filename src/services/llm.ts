@@ -1,6 +1,6 @@
 import { config } from "../config.js";
 import { HttpError } from "../errors.js";
-import type { UserFilter, UsersResponse } from "../types.js";
+import type { RandomUser, UserFilter, UsersResponse } from "../types.js";
 
 const filterSchemaDescription = `Return JSON only, exactly one of:
 {"field":"age","operator":"gt"|"lt","value":number}
@@ -56,18 +56,28 @@ export async function summarizeUsers(data: UsersResponse): Promise<string> {
   );
 }
 
+export async function genderUsers(data: UsersResponse): Promise<Record<"male" | "female", RandomUser[]>> {
+  return data.results.reduce<Record<"male" | "female", RandomUser[]>>(
+    (grouped, user) => {
+      grouped[user.gender].push(user);
+      return grouped;
+    },
+    { male: [], female: [] }
+  );
+}
+
 export async function parseFilter(query: string): Promise<UserFilter> {
   const parsed = parseJson<UserFilter>(await complete(
     `Convert the user's request into a structured filter. Do not return users or prose. ${filterSchemaDescription}`,
     query
   ));
   if (parsed.field === "age" && (parsed.operator === "gt" || parsed.operator === "lt") &&
-      Number.isInteger(parsed.value) && parsed.value >= 0 && parsed.value <= 120) return parsed;
+    Number.isInteger(parsed.value) && parsed.value >= 0 && parsed.value <= 120) return parsed;
   if (parsed.field === "age" && parsed.operator === "between" &&
-      Number.isInteger(parsed.min) && Number.isInteger(parsed.max) &&
-      parsed.min >= 0 && parsed.max <= 120 && parsed.min <= parsed.max) return parsed;
+    Number.isInteger(parsed.min) && Number.isInteger(parsed.max) &&
+    parsed.min >= 0 && parsed.max <= 120 && parsed.min <= parsed.max) return parsed;
   if (parsed.field === "city" && parsed.operator === "eq" &&
-      typeof parsed.value === "string" && parsed.value.trim().length > 0 && parsed.value.length <= 100) {
+    typeof parsed.value === "string" && parsed.value.trim().length > 0 && parsed.value.length <= 100) {
     return { ...parsed, value: parsed.value.trim() };
   }
   throw new HttpError(422, "The query could not be converted to a supported filter", "UNSUPPORTED_FILTER");

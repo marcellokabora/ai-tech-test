@@ -3,7 +3,7 @@ import { z } from "zod";
 import { config } from "./config.js";
 import { HttpError } from "./errors.js";
 import { applyFilter } from "./filter.js";
-import { parseFilter, summarizeUsers } from "./services/llm.js";
+import { genderUsers, parseFilter, summarizeUsers } from "./services/llm.js";
 import { fetchUsers } from "./services/random-user.js";
 
 export const app = express();
@@ -14,6 +14,13 @@ app.get("/health", (_req, res) => res.json({ status: "ok" }));
 app.get("/users", async (_req, res, next) => {
   try {
     res.json(await fetchUsers(config.randomUserUrl, 50));
+  } catch (error) { next(error); }
+});
+
+app.get("/users/gender", async (_req, res, next) => {
+  try {
+    const users = await fetchUsers(config.randomUserUrl, 100);
+    res.json(await genderUsers(users));
   } catch (error) { next(error); }
 });
 

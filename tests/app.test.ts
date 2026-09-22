@@ -20,6 +20,17 @@ describe("API", () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ summary: "A concise summary." });
   });
+  it("groups users by gender", async () => {
+    vi.spyOn(randomUser, "fetchUsers").mockResolvedValue({
+      results: [{ gender: "male", id: 1 }, { gender: "female", id: 2 }, { gender: "male", id: 3 }]
+    });
+    const response = await request(app).get("/users/gender");
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      male: [{ gender: "male", id: 1 }, { gender: "male", id: 3 }],
+      female: [{ gender: "female", id: 2 }]
+    });
+  });
   it("validates filter input", async () => {
     const response = await request(app).post("/users/filter").send({ query: "" });
     expect(response.status).toBe(400);

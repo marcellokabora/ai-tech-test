@@ -1,6 +1,7 @@
 export interface RandomUser {
   name?: { title?: string; first?: string; last?: string };
   location?: { city?: string; country?: string };
+  gender: "female" | "male"
   dob?: { age?: number };
   [key: string]: unknown;
 }
